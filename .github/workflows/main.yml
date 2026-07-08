@@ -89,8 +89,9 @@ jobs:
 
       - name: Start Docker Compose and wait for completion
         run: |
-          docker compose -f docker-compose-tests.yml up --build --abort-on-container-exit --exit-code-from web
-
+          docker compose -f docker-compose-tests.yml up --build -d minio 
+          docker compose -f docker-compose-tests.yml run --rm minio_mc 
+          docker compose -f docker-compose-tests.yml up --build --abort-on-container-exit --exit-code-from web web mailhog
       - name: Cleanup
         if: always()
         run: |
