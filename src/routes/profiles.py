@@ -104,7 +104,7 @@ async def create_profile(
         user_id=user_id
     )
 
-    avatar_url = s3_client.get_file_url(file_name=avatar_key)
+    avatar_url = await s3_client.get_file_url(file_name=avatar_key)
 
     db.add(user_profile)
     await db.commit()
