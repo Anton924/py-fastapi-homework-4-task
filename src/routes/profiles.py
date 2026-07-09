@@ -50,7 +50,7 @@ async def create_profile(
     except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Authorization header format. Expected 'Bearer <token>'"
+            detail="Invalid token."
         )
 
     user = await db.scalar(
@@ -87,15 +87,10 @@ async def create_profile(
             file_name=avatar_key,
             file_data=avatar_bytes
         )
-    except S3FileUploadError:
+    except (S3FileUploadError, S3ConnectionError):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to upload avatar. Please try again later."
-        )
-    except S3ConnectionError:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to connect to storage service."
         )
     profile_data = profile_info.model_dump(exclude=("avatar",))
     user_profile = UserProfileModel(
@@ -111,10 +106,12 @@ async def create_profile(
     await db.refresh(user_profile)
 
     return ProfileResponseSchema(
+        id=user_profile.id,
         first_name=user_profile.first_name,
         last_name=user_profile.last_name,
         gender=user_profile.gender,
         date_of_birth=user_profile.date_of_birth,
         info=user_profile.info,
         avatar=avatar_url,
+        user_id=user_profile.user_id
     )

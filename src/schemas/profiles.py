@@ -34,7 +34,7 @@ class ProfileRequestSchema(BaseModel):
 
     @field_validator("avatar")
     @classmethod
-    def validate_avatar(cls, value: File):
+    def validate_avatar(cls, value: UploadFile):
         validate_image(value)
         return value
 
@@ -53,9 +53,11 @@ class ProfileRequestSchema(BaseModel):
 
 
 class ProfileResponseSchema(BaseModel):
+    id: int
     first_name: str
     last_name: str
     gender: GenderEnum
     date_of_birth: date
     info: str
     avatar: str
+    user_id: int
