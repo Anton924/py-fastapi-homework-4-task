@@ -1,6 +1,13 @@
 import pathlib
 
-from fastapi import APIRouter, Depends, status, HTTPException, Path, Form, File
+from fastapi import (
+    APIRouter,
+    Depends,
+    status,
+    HTTPException,
+    Path,
+    File
+)
 from typing import Annotated
 
 from schemas import ProfileResponseSchema, ProfileRequestSchema
@@ -24,6 +31,7 @@ from exceptions.storage import S3FileUploadError, S3ConnectionError
 
 from database.models.accounts import UserProfileModel
 
+from database.models.accounts import GenderEnum
 
 router = APIRouter()
 
